@@ -36,10 +36,16 @@ jobs:
             --bootappend-live "boot=live components" \
             --iso-volume SAUCY \
             --iso-application "Saucy" \
-            --iso-publisher "Saucy project"
-          mkdir -p config/package-lists
+            --iso-publisher "Saucy project" \
+            --security false
+          mkdir -p config/package-lists config/archives
           printf '%s\n' linux-image-amd64 systemd-sysv network-manager \
             firmware-iwlwifi sudo nano htop > config/package-lists/saucy.list.chroot
+          # Debian security updates live under "trixie-security" now.
+          # The old live-build tool asks for the retired "trixie/updates" name, so
+          # we switch that off above and add the correct line here instead.
+          echo "deb http://deb.debian.org/debian-security trixie-security main non-free-firmware" \
+            > config/archives/security.list.chroot
 
       - name: Build ISO
         run: |
